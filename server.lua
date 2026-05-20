@@ -1,4 +1,5 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject({ 'Functions' })
+local sharedItems = exports['qb-core']:GetShared('Items')
 local currentDivingArea = math.random(1, #Config.CoralLocations)
 local AvailableCorals = {}
 
@@ -18,10 +19,10 @@ local function getItemPrice(amount, price)
 end
 
 local function hasCoral(src)
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = exports['qb-core']:GetPlayer(src)
     AvailableCorals = {}
     for _, v in pairs(Config.CoralTypes) do
-        local item = Player.Functions.GetItemByName(v.item)
+        local item = Player.GetItemByName(v.item)
         if item then AvailableCorals[#AvailableCorals + 1] = v end
     end
     return next(AvailableCorals)
@@ -48,16 +49,16 @@ end)
 
 RegisterNetEvent('qb-diving:server:SellCorals', function()
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = exports['qb-core']:GetPlayer(src)
     if not Player then return end
     if hasCoral(src) then
         for _, v in pairs(AvailableCorals) do
-            local item = Player.Functions.GetItemByName(v.item)
+            local item = Player.GetItemByName(v.item)
             local price = item.amount * v.price
             local reward = getItemPrice(item.amount, price)
             exports['qb-inventory']:RemoveItem(src, item.name, item.amount, false, 'qb-diving:server:SellCorals')
-            Player.Functions.AddMoney('cash', reward, 'qb-diving:server:SellCorals')
-            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[item.name], 'remove')
+            Player.AddMoney('cash', reward, 'qb-diving:server:SellCorals')
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems[item.name], 'remove')
         end
     else
         TriggerClientEvent('QBCore:Notify', src, Lang:t('error.no_coral'), 'error')
@@ -66,11 +67,11 @@ end)
 
 RegisterNetEvent('qb-diving:server:TakeCoral', function(area, coral, bool)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
+    local Player = exports['qb-core']:GetPlayer(src)
     if not Player then return end
     local coralType = math.random(1, #Config.CoralTypes)
     local amount = math.random(1, Config.CoralTypes[coralType].maxAmount)
-    local ItemData = QBCore.Shared.Items[Config.CoralTypes[coralType].item]
+    local ItemData = sharedItems[Config.CoralTypes[coralType].item]
 
     if amount > 1 then
         for _ = 1, amount, 1 do
@@ -106,7 +107,7 @@ end)
 RegisterNetEvent('qb-diving:server:removeItemAfterFill', function()
     local src = source
     exports['qb-inventory']:RemoveItem(src, 'diving_fill', 1, false, 'qb-diving:server:removeItemAfterFill')
-    TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['diving_fill'], 'remove')
+    TriggerClientEvent('qb-inventory:client:ItemBox', src, sharedItems['diving_fill'], 'remove')
 end)
 
 -- Callbacks

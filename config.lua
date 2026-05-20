@@ -1,12 +1,12 @@
 Config = Config or {}
 Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qb-target interactions (don't change this, go to your server.cfg and add `setr UseTarget true` to use this and just that from true to false or the other way around)
-Config.CopsChance = 0.5 -- The chance of the cops getting called when a coral gets picked up, this ranges from 0.0 to 1.0
-Config.OxygenLevel = 200 -- this is oxygen level you can change this number as you like
-Config.RemoveDivingGear = false -- Whether or not to remove the diving gear when empty
+Config.CopsChance = 0.5                                      -- The chance of the cops getting called when a coral gets picked up, this ranges from 0.0 to 1.0
+Config.OxygenLevel = 200                                     -- this is oxygen level you can change this number as you like
+Config.RemoveDivingGear = false                              -- Whether or not to remove the diving gear when empty
 
 Config.CoralLocations = {
     [1] = {
-        label = "This is Location 1",
+        label = 'This is Location 1',
         coords = {
             Area = vector3(-2838.8, -376.1, 3.55),
             Coral = {
@@ -44,7 +44,7 @@ Config.CoralLocations = {
         TotalCoral = 4,
     },
     [2] = {
-        label = "Location 2",
+        label = 'Location 2',
         coords = {
             Area = vector3(-3288.2, -67.58, 2.79),
             Coral = {
@@ -75,7 +75,7 @@ Config.CoralLocations = {
         TotalCoral = 3,
     },
     [3] = {
-        label = "Location 3",
+        label = 'Location 3',
         coords = {
             Area = vector3(-3367.24, 1617.89, 1.39),
             Coral = {
@@ -106,7 +106,7 @@ Config.CoralLocations = {
         TotalCoral = 3,
     },
     [4] = {
-        label = "Location 4",
+        label = 'Location 4',
         coords = {
             Area = vector3(3002.5, -1538.28, -27.36),
             Coral = {
@@ -137,7 +137,7 @@ Config.CoralLocations = {
         TotalCoral = 3,
     },
     [5] = {
-        label = "Location 5",
+        label = 'Location 5',
         coords = {
             Area = vector3(3421.58, 1975.68, 0.86),
             Coral = {
@@ -175,7 +175,7 @@ Config.CoralLocations = {
         TotalCoral = 4,
     },
     [6] = {
-        label = "Location 6",
+        label = 'Location 6',
         coords = {
             Area = vector3(2720.14, -2136.28, 0.74),
             Coral = {
@@ -213,7 +213,7 @@ Config.CoralLocations = {
         TotalCoral = 4,
     },
     [7] = {
-        label = "Location 7",
+        label = 'Location 7',
         coords = {
             Area = vector3(536.69, 7253.75, 1.69),
             Coral = {
@@ -254,12 +254,12 @@ Config.CoralLocations = {
 
 Config.CoralTypes = {
     [1] = {
-        item = "dendrogyra_coral",
+        item = 'dendrogyra_coral',
         maxAmount = math.random(1, 5),
         price = math.random(70, 100),
     },
     [2] = {
-        item = "antipatharia_coral",
+        item = 'antipatharia_coral',
         maxAmount = math.random(2, 7),
         price = math.random(50, 70),
     }

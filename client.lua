@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject({ 'Functions' })
 local isLoggedIn = LocalPlayer.state['isLoggedIn']
 local Zones = {}
 local CurrentArea = 0
@@ -33,24 +33,24 @@ local function callCops()
 end
 
 local function deleteGear()
-	if CurrentGear.mask ~= 0 then
+    if CurrentGear.mask ~= 0 then
         DetachEntity(CurrentGear.mask, false, true)
         DeleteEntity(CurrentGear.mask)
-		CurrentGear.mask = 0
+        CurrentGear.mask = 0
     end
-	if CurrentGear.tank ~= 0 then
+    if CurrentGear.tank ~= 0 then
         DetachEntity(CurrentGear.tank, false, true)
         DeleteEntity(CurrentGear.tank)
-		CurrentGear.tank = 0
-	end
+        CurrentGear.tank = 0
+    end
 end
 
 local function gearAnim()
-    RequestAnimDict("clothingshirt")
-    while not HasAnimDictLoaded("clothingshirt") do
+    RequestAnimDict('clothingshirt')
+    while not HasAnimDictLoaded('clothingshirt') do
         Wait(0)
     end
-	TaskPlayAnim(PlayerPedId(), "clothingshirt", "try_shirt_positive_d", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
+    TaskPlayAnim(PlayerPedId(), 'clothingshirt', 'try_shirt_positive_d', 8.0, 1.0, -1, 49, 0, 0, 0, 0)
 end
 
 local function takeCoral(coral)
@@ -59,14 +59,14 @@ local function takeCoral(coral)
     local times = math.random(2, 5)
     if math.random() > Config.CopsChance then callCops() end
     FreezeEntityPosition(ped, true)
-    QBCore.Functions.Progressbar("take_coral", Lang:t("info.collecting_coral"), times * 1000, false, true, {
+    QBCore.Functions.Progressbar('take_coral', Lang:t('info.collecting_coral'), times * 1000, false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
         disableCombat = true,
     }, {
-        animDict = "weapons@first_person@aim_rng@generic@projectile@thermal_charge@",
-        anim = "plant_floor",
+        animDict = 'weapons@first_person@aim_rng@generic@projectile@thermal_charge@',
+        anim = 'plant_floor',
         flags = 16,
     }, {}, {}, function() -- Done
         Config.CoralLocations[CurrentDivingLocation.area].coords.Coral[coral].PickedUp = true
@@ -102,13 +102,13 @@ local function setDivingLocation(divingLocation)
     SetBlipColour(labelBlip, 0)
     SetBlipAsShortRange(labelBlip, true)
     BeginTextCommandSetBlipName('STRING')
-    AddTextComponentSubstringPlayerName(Lang:t("info.diving_area"))
+    AddTextComponentSubstringPlayerName(Lang:t('info.diving_area'))
     EndTextCommandSetBlipName(labelBlip)
     CurrentDivingLocation.blip.label = labelBlip
     for k, v in pairs(Config.CoralLocations[CurrentDivingLocation.area].coords.Coral) do
         if Config.UseTarget then
-            exports['qb-target']:AddBoxZone('diving_coral_zone_'..k, v.coords, v.length, v.width, {
-                name = 'diving_coral_zone_'..k,
+            exports['qb-target']:AddBoxZone('diving_coral_zone_' .. k, v.coords, v.length, v.width, {
+                name = 'diving_coral_zone_' .. k,
                 heading = v.heading,
                 debugPoly = false,
                 minZ = v.coords.z - 3,
@@ -116,7 +116,7 @@ local function setDivingLocation(divingLocation)
             }, {
                 options = {
                     {
-                        label = Lang:t("info.collect_coral"),
+                        label = Lang:t('info.collect_coral'),
                         icon = 'fa-solid fa-water',
                         action = function()
                             takeCoral(k)
@@ -127,7 +127,7 @@ local function setDivingLocation(divingLocation)
             })
         else
             Zones[k] = BoxZone:Create(v.coords, v.length, v.width, {
-                name = 'diving_coral_zone_'..k,
+                name = 'diving_coral_zone_' .. k,
                 heading = v.heading,
                 debugPoly = false,
                 minZ = v.coords.z - 3,
@@ -136,7 +136,7 @@ local function setDivingLocation(divingLocation)
             Zones[k]:onPlayerInOut(function(inside)
                 if inside then
                     CurrentArea = k
-                    exports['qb-core']:DrawText(Lang:t("info.collect_coral_dt"))
+                    exports['qb-core']:DrawText(Lang:t('info.collect_coral_dt'))
                 else
                     CurrentArea = 0
                     exports['qb-core']:HideText()
@@ -148,16 +148,16 @@ end
 
 local function sellCoral()
     local playerPed = PlayerPedId()
-    LocalPlayer.state:set("inv_busy", true, true)
-    TaskStartScenarioInPlace(playerPed, "WORLD_HUMAN_STAND_IMPATIENT", 0, true)
-    QBCore.Functions.Progressbar("sell_coral_items", Lang:t("info.checking_pockets"), math.random(2000, 4000), false, true, {}, {}, {}, {}, function() -- Done
+    LocalPlayer.state:set('inv_busy', true, true)
+    TaskStartScenarioInPlace(playerPed, 'WORLD_HUMAN_STAND_IMPATIENT', 0, true)
+    QBCore.Functions.Progressbar('sell_coral_items', Lang:t('info.checking_pockets'), math.random(2000, 4000), false, true, {}, {}, {}, {}, function() -- Done
         ClearPedTasks(playerPed)
         TriggerServerEvent('qb-diving:server:SellCorals')
-        LocalPlayer.state:set("inv_busy", false, true)
+        LocalPlayer.state:set('inv_busy', false, true)
     end, function() -- Cancel
         ClearPedTasksImmediately(playerPed)
-        QBCore.Functions.Notify(Lang:t("error.canceled"), "error")
-        LocalPlayer.state:set("inv_busy", false, true)
+        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
+        LocalPlayer.state:set('inv_busy', false, true)
     end)
 end
 
@@ -178,7 +178,7 @@ local function createSeller()
             exports['qb-target']:AddTargetEntity(ped, {
                 options = {
                     {
-                        label = Lang:t("info.sell_coral"),
+                        label = Lang:t('info.sell_coral'),
                         icon = 'fa-solid fa-dollar-sign',
                         action = function()
                             sellCoral()
@@ -189,7 +189,7 @@ local function createSeller()
             })
         else
             local zone = BoxZone:Create(current.coords.xyz, current.zoneOptions.length, current.zoneOptions.width, {
-                name = 'diving_coral_seller_'..i,
+                name = 'diving_coral_seller_' .. i,
                 heading = current.coords.w,
                 debugPoly = false,
                 minZ = current.coords.z - 1.5,
@@ -198,7 +198,7 @@ local function createSeller()
             zone:onPlayerInOut(function(inside)
                 if inside then
                     inSellerZone = true
-                    exports['qb-core']:DrawText(Lang:t("info.sell_coral_dt"))
+                    exports['qb-core']:DrawText(Lang:t('info.sell_coral_dt'))
                 else
                     inSellerZone = false
                     exports['qb-core']:HideText()
@@ -235,8 +235,8 @@ RegisterNetEvent('qb-diving:client:UpdateCoral', function(area, coral, bool)
 end)
 
 RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)
-    PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-    TriggerEvent("chatMessage", Lang:t("error.911_chatmessage"), "error", msg)
+    PlaySound(-1, 'Lose_1st', 'GTAO_FM_Events_Soundset', 0, 0, 1)
+    TriggerEvent('chatMessage', Lang:t('error.911_chatmessage'), 'error', msg)
     local transG = 100
     local blip = AddBlipForRadius(coords.x, coords.y, coords.z, 100.0)
     SetBlipSprite(blip, 9)
@@ -244,7 +244,7 @@ RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)
     SetBlipAlpha(blip, transG)
     SetBlipAsShortRange(blip, false)
     BeginTextCommandSetBlipName('STRING')
-    AddTextComponentSubstringPlayerName(Lang:t("info.blip_text"))
+    AddTextComponentSubstringPlayerName(Lang:t('info.blip_text'))
     EndTextCommandSetBlipName(blip)
     while transG ~= 0 do
         Wait(180 * 4)
@@ -258,26 +258,26 @@ RegisterNetEvent('qb-diving:client:CallCops', function(coords, msg)
     end
 end)
 
-RegisterNetEvent("qb-diving:client:SetOxygenLevel", function()
+RegisterNetEvent('qb-diving:client:SetOxygenLevel', function()
     if OxygenLevel == 0 then
-       OxygenLevel = Config.OxygenLevel -- oxygenlevel
-       QBCore.Functions.Notify(Lang:t("success.tube_filled"), 'success')
-       TriggerServerEvent('qb-diving:server:removeItemAfterFill')
+        OxygenLevel = Config.OxygenLevel -- oxygenlevel
+        QBCore.Functions.Notify(Lang:t('success.tube_filled'), 'success')
+        TriggerServerEvent('qb-diving:server:removeItemAfterFill')
     else
-        QBCore.Functions.Notify(Lang:t("error.oxygenlevel", {oxygenlevel = OxygenLevel}), 'error')
+        QBCore.Functions.Notify(Lang:t('error.oxygenlevel', { oxygenlevel = OxygenLevel }), 'error')
     end
 end)
 
 function DrawText2(text)
-	SetTextFont(4)
-	SetTextProportional(true)
-	SetTextScale(0.0, 0.45)
-	SetTextDropshadow(1, 0, 0, 0, 255)
-	SetTextEdge(1, 0, 0, 0, 255)
-	SetTextDropShadow()
-	SetTextOutline()
-	BeginTextCommandDisplayText("STRING")
-	AddTextComponentSubstringPlayerName(text)
+    SetTextFont(4)
+    SetTextProportional(true)
+    SetTextScale(0.0, 0.45)
+    SetTextDropshadow(1, 0, 0, 0, 255)
+    SetTextEdge(1, 0, 0, 0, 255)
+    SetTextDropShadow()
+    SetTextOutline()
+    BeginTextCommandDisplayText('STRING')
+    AddTextComponentSubstringPlayerName(text)
     EndTextCommandDisplayText(0.45, 0.90)
 end
 
@@ -288,7 +288,7 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
             isWearingSuit = true
             if not IsPedSwimming(ped) and not IsPedInAnyVehicle(ped, false) then
                 gearAnim()
-                QBCore.Functions.Progressbar("equip_gear", Lang:t("info.put_suit"), 5000, false, true, {}, {}, {}, {},
+                QBCore.Functions.Progressbar('equip_gear', Lang:t('info.put_suit'), 5000, false, true, {}, {}, {}, {},
                     function() -- Done
                         deleteGear()
                         local maskModel = `p_d_scuba_mask_s`
@@ -312,7 +312,7 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
                         SetPedMaxTimeUnderwater(ped, 2000.00)
                         CurrentGear.enabled = true
                         ClearPedTasks(ped)
-                        TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
+                        TriggerServerEvent('InteractSound_SV:PlayOnSource', 'breathdivingsuit', 0.25)
                         OxygenLevel = OxygenLevel
                         CreateThread(function()
                             while CurrentGear.enabled do
@@ -320,14 +320,14 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
                                     OxygenLevel = OxygenLevel - 1
 
                                     if OxygenLevel % 10 == 0 and OxygenLevel <= 90 and OxygenLevel > 0 then
-                                        TriggerServerEvent("InteractSound_SV:PlayOnSource", "breathdivingsuit", 0.25)
+                                        TriggerServerEvent('InteractSound_SV:PlayOnSource', 'breathdivingsuit', 0.25)
                                     elseif OxygenLevel == 0 then
                                         if Config.RemoveDivingGear then deleteGear() end
                                         SetEnableScuba(ped, false)
                                         SetPedMaxTimeUnderwater(ped, 1.00)
                                         CurrentGear.enabled = false
                                         isWearingSuit = false
-                                        TriggerServerEvent("InteractSound_SV:PlayOnSource", nil, 0.25)
+                                        TriggerServerEvent('InteractSound_SV:PlayOnSource', nil, 0.25)
                                         return
                                     end
                                 end
@@ -336,21 +336,21 @@ RegisterNetEvent('qb-diving:client:UseGear', function()
                         end)
                     end)
             else
-                QBCore.Functions.Notify(Lang:t("error.not_standing_up"), 'error')
+                QBCore.Functions.Notify(Lang:t('error.not_standing_up'), 'error')
             end
         else
-            QBCore.Functions.Notify(Lang:t("error.need_otube"), 'error')
+            QBCore.Functions.Notify(Lang:t('error.need_otube'), 'error')
         end
     elseif isWearingSuit == true then
         gearAnim()
-        QBCore.Functions.Progressbar("remove_gear", Lang:t("info.pullout_suit"), 5000, false, true, {}, {}, {}, {}, function() -- Done
+        QBCore.Functions.Progressbar('remove_gear', Lang:t('info.pullout_suit'), 5000, false, true, {}, {}, {}, {}, function() -- Done
             SetEnableScuba(ped, false)
             SetPedMaxTimeUnderwater(ped, 50.00)
             CurrentGear.enabled = false
             ClearPedTasks(ped)
             deleteGear()
-            QBCore.Functions.Notify(Lang:t("success.took_out"))
-            TriggerServerEvent("InteractSound_SV:PlayOnSource", nil, 0.25)
+            QBCore.Functions.Notify(Lang:t('success.took_out'))
+            TriggerServerEvent('InteractSound_SV:PlayOnSource', nil, 0.25)
             isWearingSuit = false
             OxygenLevel = OxygenLevel
         end)
@@ -404,7 +404,7 @@ CreateThread(function()
         Wait(0)
         if CurrentGear.enabled == true and isWearingSuit == true and OxygenLevel > 0 then
             if IsPedSwimmingUnderWater(PlayerPedId()) then
-                DrawText2(OxygenLevel..'⏱')
+                DrawText2(OxygenLevel .. '⏱')
             end
         end
     end
